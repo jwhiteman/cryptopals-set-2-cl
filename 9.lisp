@@ -1,11 +1,9 @@
 (defun pkcs-7 (plaintext block-size)
-  (let ((diff (mod (length plaintext) block-size)))
-    (if (zerop diff)
-	plaintext
-	(let ((n (- block-size diff)))
-	  (concatenate 'string
-		       plaintext
-		       (format nil "~v@{~A~:*~}" n (code-char n)))))))
+  (let ((n (- block-size
+              (mod (length plaintext) block-size))))
+    (concatenate 'string
+                 plaintext
+                 (format nil "~v@{~A~:*~}" n (code-char n)))))
 
 ;; test...
 (format t "~A~%" (pkcs-7 "YELLOW SUBMARINE" 20))
