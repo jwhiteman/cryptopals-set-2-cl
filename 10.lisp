@@ -25,21 +25,6 @@
 (defun ecb (keystr)
   (ironclad:make-cipher :AES :key (str->bytes keystr) :mode :ECB))
 
-;; TODO: swap `encrypt-in-place` for `encrypt`
-(defun aes-cbc-encrypt (key plaintext &optional (iv (alloc-byte-vector)))
-  (let* ((str-bytes (str->bytes (pkcs-7 plaintext 16)))
-         (cipher (ecb key))
-         (n (/ (length str-bytes) 16))
-         (acc)
-         (prev iv))
-    (do ((i 0 (1+ i)))
-        ((= i n) (map 'string #'code-char acc))
-      (let* ((slice (subseq str-bytes (* i 16) ( * (1+ i) 16)))
-             (bytes (vector-xor prev slice)))
-        (ironclad:encrypt-in-place cipher bytes)
-        (setf acc (concatenate 'vector acc bytes)
-              prev bytes)))))
-
 ;; meh...a little ugly, but ok
 (defun aes-cbc-decrypt (key plaintext &optional (iv (alloc-byte-vector)))
   (let* ((str-bytes (str->bytes plaintext))
